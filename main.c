@@ -1,8 +1,3 @@
-//-----------------
-// Hello World AVR
-// Blinking led
-//-----------------
-
 #define F_CPU 16000000UL // Директива установки частоты процессора
 
 #include <avr/io.h>		 // Библиотека для работы с портами ввода-вывода
@@ -10,18 +5,34 @@
 
 int main ()
 {
+    DDRE |= (1 << PE4);
+	PORTE |=  (1 << PE4);
+    DDRE |= (1 << PE5);
+	PORTE &= ~(1 << PE5);
 	DDRE |= (1 << PE6);
-	PORTE &= ~(1 << PE6);
+	PORTE |=  (1 << PE6);
+    int <<count = 0;
 
 	// Главный цикл работы МК
-	while (1)
-	{
-		// Включение напряжения на выводе PE6
-		PORTE |=  (1 << PE6);
-		_delay_ms(500); // Пауза 500 мс (0.5 с)
+	if (PE4 == 0){
+        PORTE |=  (1 << PE5);
+        PORTE &= ~(1 << PE6);
+        while(PE5 == 1){
+            
+        }
+        else(PE5 == 0){
+            count++;
+        }
+	}
 
-		// Отключение напряжения на выводе PE6
-		PORTE &= ~(1 << PE6);
-		_delay_ms(500);
+    if (PE6 == 0){
+        PORTE |=  (1 << PE5);
+        PORTE &= ~(1 << PE4);
+        while(PE5 == 1){
+
+        }
+        else(PE5 == 0){
+            count--;
+        }
 	}
 }
