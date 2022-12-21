@@ -16,7 +16,7 @@ int count=0;
 
 void IN()
 {
-    count++;
+    	count++;
 	_delay_ms(500);
 }
 void OUT()
