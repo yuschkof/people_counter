@@ -12,6 +12,19 @@
 
 #define OUTPUT PF4 // Вывод 1
 
+int count=0;
+
+void IN()
+{
+    count++;
+	_delay_ms(500);
+}
+void OUT()
+{
+  	count--;
+	_delay_ms(500);
+}
+
 
 int main ()
 {
@@ -19,26 +32,23 @@ int main ()
 	DDRB |= (1 << WHITE_I) | (1 << BLUE_I) | (1 << GREEN_I);
 	DDRF &= ~((1 << WHITE_P) | (1 << BLUE_P) | (1 << GREEN_P));
 	PORTF |= (1 << WHITE_P) | (1 << BLUE_P) | (1 << GREEN_P);
-	PORTB |= (1 << PB6);
-	PORTB |= (1 << PB0);
+	PORTB |= (1 << WHITE_I); // Включаем белый излучатель
+	PORTB |= (1 << GREEN_I); // Включаем зеленый излучатель
 	// Главный цикл работы МК
 	while (1)
 	{
 		
-		if ((PINF & (1 << PF1)) == 0){
-			PORTB |=  (1 << PB5);
-			PORTB &= ~(1 << PB0);
-			PORTB &= ~(1 << PB6);
-			if ( PINF & ( 1 << PF2)) == 0{
-				count++;
-			PORTF |= (1 << PF4);
+		if ((PINF & (1 << WHITE_P)) == 0){
+			_delay_ms(100);
+			if ( PINF & ( 1 << GREEN_P)) == 0{
+				IN();
 			}
 		}
-		else {
-			PORTB |= (1 << PB6);
-			PORTF &= ~(1 << PF4);
-			PORTB |= (1 << PB0);
-			PORTB &= ~(1 << PB5);
+		if ((PINF & (1 << GREEN_P)) == 0){
+			_delay_ms(100);
+			if ( PINF & ( 1 << WHITE_P)) == 0{
+				OUT();
+			}
 		}
 			
 	}
