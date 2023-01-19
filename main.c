@@ -10,8 +10,6 @@
 #define BLUE_I PB5 // Излучатель Синий
 #define GREEN_I PB0 // Излучатель Зеленый
 
-#define OUTPUT PF4 // Вывод 1
-
 int count=0;
 
 
