@@ -1,6 +1,6 @@
 #define F_CPU 16000000UL // Директива установки частоты процессора
-#include <avr/io.h>		 // Библиотека для работы с портами ввода-вывода
-#include <util/delay.h>	 // Библиотека для работы с паузой
+#include <avr/io.h> // Библиотека для работы с портами ввода-вывода
+#include <util/delay.h> // Библиотека для работы с паузой
 
 #define WHITE_P PE0 // Приемник Белый
 #define BLUE_P PE1// Приемник Синий
@@ -10,24 +10,21 @@
 #define BLUE_I PB5 // Излучатель Синий
 #define GREEN_I PB0 // Излучатель Зеленый
 
-int count=0;
+int count = 0;
 
-
-void IN() {
-    count++;
-    /*PORTB |= (1 << WHITE_I);
-	PORTB &= ~(1 << BLUE_I);
-	PORTB |= (1 << GREEN_I);*/
+// функция прибавления объектов
+void IN() { 
+	if(count < 10) {
+		count++;
+	}
 }
+
+// функция убавления объектов
 void OUT() {
 	if(count > 0) {
 		count--;
 	}
-	/*PORTB |= (1 << GREEN_I);
-	PORTB &= ~(1 << BLUE_I);
-	PORTB |= (1 << WHITE_I);*/
 }
-
 
 
 int main () {
@@ -37,63 +34,35 @@ int main () {
     PORTB |= (1 << WHITE_I); // Включаем белый излучатель
     PORTB |= (1 << GREEN_I); // Включаем зеленый излучатель
     DDRF = 0b11111111;
-    // Главный цикл работы МК
+    
     _delay_ms(500);
-    int a[] = {0b11000000, 0b11111001, 0b10100100, 0b10110000, 0b10011001, 0b10010010, 0b10000010, 0b11111000, 0b10000000, 0b10010000}; //массив цифр от 0 до 9
+    TCNT1 = 0; // таймер 
+    TCCR1B = 0b00000100; // настройка предделителя
+    int a[] = {0b11000000, 0b11111001, 0b10100100, 0b10110000, 0b10011001, 0b10010010, 0b10000010, 0b11111000, 0b10000000, 0b10010000}; //массив цифр
+    PORTF = a[0];
+    // Главный цикл работы МК
     while (1) {
-
-        /*if ((PIND & (1 << WHITE_P)) == 0) {
-			PORTB &= ~(1 << WHITE_I);
-            PORTB |= (1 << BLUE_I);
-            PORTB &= ~(1 << GREEN_I);
-            start = GetLocalTime(&st);
-            while (GetLocalTime(&st) - start < 5){
-				if ((PIND & (1 << BLUE_P)) == 0) {
-					IN();
-					p++;
-					break;
-				}
-			}
-			
-			if (p == 0){
-				PORTB |= (1 << WHITE_I);
-				PORTB &= ~(1 << BLUE_I);
-				PORTB |= (1 << GREEN_I);
-			}
-			p = 0;
-		}
-		
-		if ((PIND & (1 << GREEN_P)) == 0) {
-			PORTB &= ~(1 << GREEN_I);
-			PORTB &= ~(1 << WHITE_I);
-			PORTB |= (1 << BLUE_I);
-			start = time();
-           	while (time() - start < 5){
-				if ((PIND & (1 << BLUE_P)) == 0) {
-					OUT();
-					p++;
-					break;
-				}
-			}
-			
-			if (p == 0){
-				PORTB |= (1 << GREEN_I);
-				PORTB &= ~(1 << BLUE_I);
-				PORTB |= (1 << WHITE_I);
-			}
-			p = 0;
-		}*/
-		if (count >= 0 && count < 10) {
-			PORTF = a[count];
-		}	
-		
 		if ((PINE & (1 << GREEN_P)) == 0) {
-			IN();
-			_delay_ms(500);
+			TCNT1 = 0;
+			while (TCNT1 <= 30000){
+				if((PINE & (1 << WHITE_P)) == 0){
+					IN();
+					PORTF = a[count];
+					break;
+				}
+			}
+			
 		}
-		else if ((PINE & (1 << WHITE_P)) == 0) {
-			OUT();
-			_delay_ms(500);
+		if ((PINE & (1 << WHITE_P)) == 0) {
+			TCNT1 = 0;
+			while (TCNT1 <= 30000){
+				if((PINE & (1 << GREEN_P)) == 0){
+					OUT();
+					PORTF = a[count];
+					break;
+				}
+			}
 		}
-	}     
+	}
+                
 }
